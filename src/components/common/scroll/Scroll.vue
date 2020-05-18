@@ -29,6 +29,11 @@ export default {
       default: true
     }
   },
+  computed: {
+    scrollY(){
+      return this.scroll.y
+    }
+  },
   methods: {
     scrollTo(x, y, time = 300) {
       this.scroll && this.scroll.scrollTo && this.scroll.scrollTo(x, y, time);
@@ -38,6 +43,9 @@ export default {
     },
     refresh() {
       this.scroll && this.scroll.refresh && this.scroll.refresh();
+    },
+    getScorllY(){
+      return this.scroll ? this.scroll.y:0;
     }
   },
   mounted() {

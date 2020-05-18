@@ -1,6 +1,8 @@
 <template>
-  <div class="goodslistitem">
-    <img :src="goodsItem.goods_small_logo?goodsItem.goods_small_logo:'http://image1.suning.cn/uimg/b2c/newcatentries/0070096237-000000000785781585_1_400x400.jpg'" alt @load="imageLoad"/>
+  <div class="goodslistitem" @click="itemClick(goodsItem)">
+    <img 
+    :src="goodsItem.goods_small_logo?goodsItem.goods_small_logo:'http://image1.suning.cn/uimg/b2c/newcatentries/0070096237-000000000785781585_1_400x400.jpg'" 
+    alt @load="imageLoad"/>
     <div class="goodslistitemtitle">
       <p>{{goodsItem.goods_name}}</p>
       <div class="sell">
@@ -30,7 +32,30 @@ export default {
   methods: {
     imageLoad(){
       //事件总线
+      // this.$bus.$emit('itemImageLoad')
+
+      //不同的页面监听事件
+      //第一种 通过路由
+      // if(this.$route.path.indexOf('/home')){
+      //   this.$bus.$emit('homeItemImageLoad')
+      // }else if(this.$route.path.indexOf('/detail')){
+      //   this.$bus.$emit('detailItemImageLoad')
+      // }
+
+      //第二种 在home页面离开时取消这个事件
+      //在home页面
       this.$bus.$emit('itemImageLoad')
+    },
+    itemClick(params){
+      // console.log(params.goods_id)
+      // 跳转详情页
+      const goods_id = params.goods_id;
+      this.$router.push({
+        path:'/detail',
+        query:{
+          goods_id
+        }
+      })
     }
   },
 };
