@@ -118,8 +118,11 @@ export default {
       this.goodsObj = res.message;
       const data = res.message;
       //2 获取顶部的图片轮播数据
-      this.banners = data.pics;
-
+      if (data.pics.length === 0) {
+        this.banners = [];
+      } else {
+        this.banners = data.pics;
+      }
       //3 获取商品信息
       this.goods = new Goods(
         data.goods_name,
@@ -140,6 +143,7 @@ export default {
         weight: data.goods_weight
       };
       this.paramInfo = new GoodsParam(paramObj, data.attrs);
+
       //评论信息
       const rate = {
         cRate: 125,
@@ -156,9 +160,15 @@ export default {
             rateId: "11624z5q",
             style: "颜色:上衣+裤子 尺码:M",
             user: {
-              avatar: data.pics[0].pics_mid
-                ? data.pics[0].pics_mid
-                : "https://ww1.sinaimg.cn/large/007rAy9hgy1g24by9t530j30i20i2glm.jpg",
+              avatar:
+                data.pics.length !== 0
+                  ? data.pics[0].pics_mid
+                  : [
+                      {
+                        pics_mid:
+                          "https://ww1.sinaimg.cn/large/007rAy9hgy1g24by9t530j30i20i2glm.jpg"
+                      }
+                    ],
               uname: data.attrs[0].attr_value
             }
           }
@@ -256,8 +266,8 @@ export default {
         if (
           (this.currentIndex !== i &&
             i < length - 1 &&
-              positionY >= this.themeTopYs[i] &&
-              positionY < this.themeTopYs[i + 1]) ||
+            positionY >= this.themeTopYs[i] &&
+            positionY < this.themeTopYs[i + 1]) ||
           (i === length - 1 && positionY >= this.themeTopYs[i])
         ) {
           // console.log(parseInt(i))
@@ -297,7 +307,7 @@ export default {
         //   this.show = false;
         //   this.message = '';
         // },2000);
-        this.$toast.show(res,1500)
+        this.$toast.show(res, 1500);
         // console.log(this.$toast)
       });
       //或者使用映射方法调用

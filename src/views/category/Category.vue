@@ -1,148 +1,119 @@
 <template>
-  <div class="wrapper" ref="perent">
-    <ul class="content">
-      <!-- 1 无论是否设置click:false,button都可以点击 -->
-      <button @click="btnClick">按钮</button>
-      <!-- 2 必须设置click:true,那么div才能监听点击 -->
-      <div @click="divClick">点击</div>
-      <li>分类1</li>
-      <li>分类2</li>
-      <li>分类3</li>
-      <li>分类4</li>
-      <li>分类5</li>
-      <li>分类6</li>
-      <li>分类7</li>
-      <li>分类8</li>
-      <li>分类9</li>
-      <li>分类10</li>
-      <li>分类11</li>
-      <li>分类12</li>
-      <li>分类13</li>
-      <li>分类14</li>
-      <li>分类15</li>
-      <li>分类16</li>
-      <li>分类17</li>
-      <li>分类18</li>
-      <li>分类19</li>
-      <li>分类20</li>
-      <li>分类21</li>
-      <li>分类22</li>
-      <li>分类23</li>
-      <li>分类24</li>
-      <li>分类25</li>
-      <li>分类26</li>
-      <li>分类27</li>
-      <li>分类28</li>
-      <li>分类29</li>
-      <li>分类30</li>
-      <li>分类31</li>
-      <li>分类32</li>
-      <li>分类33</li>
-      <li>分类34</li>
-      <li>分类35</li>
-      <li>分类36</li>
-      <li>分类37</li>
-      <li>分类38</li>
-      <li>分类39</li>
-      <li>分类40</li>
-      <li>分类41</li>
-      <li>分类42</li>
-      <li>分类43</li>
-      <li>分类44</li>
-      <li>分类45</li>
-      <li>分类46</li>
-      <li>分类47</li>
-      <li>分类48</li>
-      <li>分类49</li>
-      <li>分类50</li>
-      <li>分类51</li>
-      <li>分类52</li>
-      <li>分类53</li>
-      <li>分类54</li>
-      <li>分类55</li>
-      <li>分类56</li>
-      <li>分类57</li>
-      <li>分类58</li>
-      <li>分类59</li>
-      <li>分类60</li>
-      <li>分类61</li>
-      <li>分类62</li>
-      <li>分类63</li>
-      <li>分类64</li>
-      <li>分类65</li>
-      <li>分类66</li>
-      <li>分类67</li>
-      <li>分类68</li>
-      <li>分类69</li>
-      <li>分类70</li>
-      <li>分类71</li>
-      <li>分类72</li>
-      <li>分类73</li>
-      <li>分类74</li>
-      <li>分类75</li>
-      <li>分类76</li>
-      <li>分类77</li>
-      <li>分类78</li>
-      <li>分类79</li>
-      <li>分类80</li>
-      <li>分类81</li>
-      <li>分类82</li>
-      <li>分类83</li>
-      <li>分类84</li>
-      <li>分类85</li>
-      <li>分类86</li>
-      <li>分类87</li>
-      <li>分类88</li>
-      <li>分类89</li>
-      <li>分类90</li>
-      <li>分类91</li>
-      <li>分类92</li>
-      <li>分类93</li>
-      <li>分类94</li>
-      <li>分类95</li>
-      <li>分类96</li>
-      <li>分类97</li>
-      <li>分类98</li>
-      <li>分类99</li>
-      <li>分类100</li>
-    </ul>
+  <div id="category">
+    <!-- NarBar -->
+    <category-nar-bar class="category-nar"></category-nar-bar>
+    <!-- 左侧导航 -->
+    <category-left-bar
+      class="category-left-bar"
+      :leftMenuList="leftMenuList"
+      @leftMenuItemClick="leftMenuItemClick"
+    ></category-left-bar>
+    <!-- 右侧导航 -->
+    <category-right-bar class="category-right-bar" 
+    :rightContent="rightContent"
+    ></category-right-bar>
   </div>
 </template>
 
 <script>
-import BScroll from "better-scroll";
+import CategoryNarBar from "./childComps/CategoryNarBar";
+import CategoryLeftBar from "./childComps/CategoryLeftBar";
+import CategoryRightBar from "./childComps/CategoryRightBar";
+
+import { getCategoryDatas } from "network/category";
+
 export default {
   name: "Category",
   data() {
     return {
-      scroll: null
+      leftMenuList: [],
+      rightContent: [],
+      Cates: []
     };
   },
-  mounted() {
-    // console.log(this.$refs.perent)
-    this.scroll = new BScroll(document.querySelector(".wrapper"), {
-      probeType: 3,
-      pullUpLoad: true
-    });
+  components: {
+    CategoryNarBar,
+    CategoryLeftBar,
+    CategoryRightBar
+  },
+  created() {
+    //1 从本地存储中获取数据
+    const Cates = this.getStorage("cates");
+    console.log(Cates)
+    //2 判断
+    if(!Cates){
+      //不存在 发送请求获取数据
+      this.getCategoryDatas();
+    }else{
+      //有旧的数据 定义过期时间
+      if(Date.now() - Cates.time > 1000 * 10){
+        this.getCategoryDatas();
+      }else{
+        //可以使用旧的数据
+        this.Cates = Cates.data;
+        this.leftMenuList = this.Cates.map(v => v.cat_name);
+        this.rightContent = this.Cates[0].children;
+      }
+    }
 
-    this.scroll.on("scroll", position => {
-      console.log(position);
-    });
-
-    this.scroll.on("pullingUp", () => {
-      console.log("上拉加载");
-    });
   },
   methods: {
-    btnClick() {},
-    divClick() {}
+    /**网络请求 */
+    getCategoryDatas() {
+      getCategoryDatas().then(res => {
+        this.Cates = res.message;
+        //把接口的数据存储到本地存储中
+        this.setStorage("cates", { time: Date.now(), data: this.Cates })
+        this.leftMenuList = this.Cates.map(v => v.cat_name);
+        this.rightContent = this.Cates[0].children;
+      });
+    },
+    /**逻辑处理 */
+    leftMenuItemClick(index) {
+      this.rightContent = this.Cates[index].children;
+    },
+    rightSlideClick(){
+      this.$router.push({
+        type:'/lis'
+      })
+    },
+    //存储
+    setStorage(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    },
+    //取出数据
+    getStorage(key) {
+      return JSON.parse(localStorage.getItem(key));
+    },
+    // 删除数据
+    remove(key) {
+      localStorage.removeItem(key);
+    }
   }
 };
 </script>
 
 <style scoped>
-.wrapper {
-  height: 150px;
-  background-color: pink;
+#category {
+  position: relative;
+  height: 100vh;
+}
+.category-nar {
+  background-color: var(--color-tint);
+  color: #fff;
+}
+.category-left-bar {
+  float: left;
+  width: 80px;
+  height: calc(100% - 44px - 49px);
+  overflow: hidden;
+  background-color: WhiteSmoke;
+}
+.category-right-bar {
+  float: left;
+  width: 240px;
+  height: calc(100% - 44px - 49px);
+  overflow: hidden;
+  background-color: #fff;
 }
 </style>

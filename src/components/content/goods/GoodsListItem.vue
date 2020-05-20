@@ -1,8 +1,12 @@
 <template>
   <div class="goodslistitem" @click="itemClick(goodsItem)">
-    <img 
+    <!-- <img 
     :src="goodsItem.goods_small_logo?goodsItem.goods_small_logo:'http://image1.suning.cn/uimg/b2c/newcatentries/0070096237-000000000785781585_1_400x400.jpg'" 
-    alt @load="imageLoad"/>
+    alt @load="imageLoad"/> -->
+    <!-- 使用懒加载 -->
+    <img 
+    v-lazy="goodsItem.goods_small_logo?goodsItem.goods_small_logo:'https://ww1.sinaimg.cn/large/007rAy9hgy1g24by9t530j30i20i2glm.jpg'" 
+    alt @load="imageLoad"/> 
     <div class="goodslistitemtitle">
       <p>{{goodsItem.goods_name}}</p>
       <div class="sell">

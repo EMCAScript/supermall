@@ -2,7 +2,6 @@ import Toast from './Toast'
 const obj = {}
 
 obj.install = function(Vue){
-    console.log('执行toast插件',Vue);
 
     // Vue.prototype.$toast = ''
 

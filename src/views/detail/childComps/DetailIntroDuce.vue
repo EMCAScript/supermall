@@ -24,6 +24,7 @@ export default {
   },
   watch: {
     shop(newVal, oldVal) {
+      console.log(1)
       this.shopImages = newVal;
        newVal && this.preloadImagesMethod();
     }
